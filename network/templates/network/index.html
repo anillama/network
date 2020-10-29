@@ -1,0 +1,166 @@
+
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+<div class="body">
+	{%if user.is_authenticated and show is None %}
+	<div class="form">
+		<h5>New Posts</h5>
+			<form action="{% url 'dataPost'%}" method="post">
+				{% csrf_token %}
+    			<textarea name="userPost" class="textArea" placeholder="Write a Post..."></textarea></br>
+    			<input type="submit" name="postId" value="Post">
+    		</form>
+	</div>
+	{% endif %}
+
+<div class="userPost">
+	<hr>
+	{% if data %}
+		{% for allPost in item %}
+		<div class="form">
+			<h5 class="postData" id=",{{allPost.id}}" >{{ allPost.userBio }} </h5>
+			<div class="edit">
+				{% if userRequest == allPost.userName %}
+					<button class="editPos" id="{{ allPost.id }}," value="{{ allPost.userBio }}">Edit</button>
+				{% endif %}
+			</div>
+			<hr>
+			By: <a href="{% url 'userInfo' userId=allPost.userName %}" class="userInfo">{{ allPost.userName }}</a> 
+			 <em> On: {{ allPost.timestamp }} </br></em> 
+			<hr>
+				{% if allPost.id in dic %}
+					{%if allPost.id in userLikes %}
+						<div class="fas fa-heart" id="{{allPost.id}}" value="{{ allPost.userName }}" style="font-size:20px;color:red;"></div>
+					{% else %}
+						<div class="fas fa-heart" id="{{allPost.id}}" value="{{ allPost.userName }}" style="font-size:20px;color:grey;"></div>
+					{% endif %}
+					{% for x, y in dic.items %}
+						{% if allPost.id == x %}
+							<span id="{{ allPost.id }},," class="countColor">{{ y }}</span>
+						{% endif %}
+					{%endfor%}
+				{% else %}
+				<div class="fas fa-heart" id="{{allPost.id}}" value="{{ allPost.userName }}" style="font-size:20px;color:grey;"></div>
+				<span class="countColor" id="{{ allPost.id }},,"></span>
+				{%endif %}
+		</div>
+		{% endfor %}
+		<br/>
+			{%	if item.has_previous %}
+				<button><a href="{% url 'index'%}?page={{item.previous_page_number}}">Previous </a></button>
+			{% endif %}
+			{% if item.has_next %}
+				<button><a href="{% url 'index'%}?page={{item.next_page_number}}">Next</a></button>
+			{% endif %}
+			
+	{% endif %}
+</br></br>
+</div>
+	{% if show %}
+		<div class="userInfoDisplay">
+			<div class="userBio">
+				<h5>{{userN}}</h5>
+				<div>Posts {{post}}</div>
+				<div>Followers {{follower}}</div>
+				<div>Following {{following}}</div> </br>
+				<form action="{% url 'followInfo' userFollow=requestUser userFoller=userN %}" method="POST">
+					{% csrf_token %}
+					{%if requestUser != userN %}
+						{% if check %}
+								<button name="following" >Following </button>
+						{% else %}
+								<button name="follow" >Follow </button>
+						{% endif %}  
+					{% endif %}
+				</form>
+				
+			</div>
+			<div class="userPostt">
+				<h5>Post</h5>
+				{% for allPost in item%}
+				<div class="form">
+					<h5 class="postData" id=",{{allPost.id}}">{{ allPost.userBio }} </h5>
+					<div class="edit">
+						{% if requestUser == allPost.userName %}
+						<button class="editPos" id="{{ allPost.id }}," value="{{allPost.userBio}}">Edit</button>
+						{% endif %}
+					</div>
+					<hr>
+					By: <a href="{% url 'userInfo' userId=allPost.userName %}" class="userInfo">{{ allPost.userName }}</a> 
+			 		<em> On: {{ allPost.timestamp }} </br></em> 
+					<hr>
+					{% if allPost.id in dic %}
+						{%if allPost.id in userLikes %}
+							<div class="fas fa-heart" id="{{allPost.id}}" value="{{ allPost.userName }}" style="font-size:20px;color:red;"></div>
+						{% else %}
+							<div class="fas fa-heart" id="{{allPost.id}}" value="{{ allPost.userName }}" style="font-size:20px;color:grey;"></div>
+						{% endif %}
+							{% for x, y in dic.items %}
+								{% if allPost.id == x %}
+									<span id="{{ allPost.id }},," class="countColor">{{ y }}</span>
+								{% endif %}
+							{%endfor%}
+				{% else %}
+						<div class="fas fa-heart" id="{{allPost.id}}" value="{{ allPost.userName }}" style="font-size:20px;color:grey;"></div>
+						<span class="countColor" id="{{ allPost.id }},,"></span>
+				{%endif %}
+				</div>
+				{%endfor%}
+				<br/>
+				{%	if item.has_previous %}
+					<button><a href="{% url 'userInfo' userId=request.user %}?page={{item.previous_page_number}}">Previous </a></button>
+				{% endif %}
+				{% if item.has_next %}
+					<button><a href="{% url 'userInfo' userId=request.user %}?page={{item.next_page_number}}">Next</a></button>
+				{% endif %}
+			</div>
+		</div>
+		<br/>
+		<br/>
+	{% endif %}
+	<div>
+		{%if userPostt %}
+			{% for allPost in item %}
+					<div class="form">
+						<h5>{{ allPost.userBio }} </h5>
+						<hr>
+						By: <a href="{% url 'userInfo' userId=allPost.userName %}" class="userInfo">{{ allPost.userName }}</a> 
+				 		<em> On: {{ allPost.timestamp }} </br></em> 
+						<hr>
+						{% if allPost.id in dic %}
+						{%if allPost.id in userLikes %}
+							<div class="fas fa-heart" id="{{allPost.id}}" value="{{ allPost.userName }}" style="font-size:20px;color:red;"></div>
+						{% else %}
+							<div class="fas fa-heart" id="{{allPost.id}}" value="{{ allPost.userName }}" style="font-size:20px;color:grey;"></div>
+						{% endif %}
+							{% for x, y in dic.items %}
+								{% if allPost.id == x %}
+									<span id="{{ allPost.id }},," class="countColor">{{ y }}</span>
+								{% endif %}
+							{%endfor%}
+						{% else %}
+							<div class="fas fa-heart" id="{{allPost.id}}" value="{{ allPost.userName }}" style="font-size:20px;color:grey;"></div>
+							<span class="countColor" id="{{ allPost.id }},,"></span>
+						{%endif %}
+					</div>
+			{% endfor%}
+			<br/>
+				{%	if item.has_previous %}
+					<button><a href="{% url 'followingPosts'%}?page={{item.previous_page_number}}">Previous </a></button>
+				{% endif %}
+				{% if item.has_next %}
+					<button><a href="{% url 'followingPosts'%}?page={{item.next_page_number}}">Next</a></button>
+				{% endif %}
+		{% endif %}
+		<br/>
+		<br/>
+	</div>
+</div>
+{% endblock %}
+
+{% block script %}
+	<script src="{% static 'network/inbox.js' %}"></script>
+{% endblock %}
+
